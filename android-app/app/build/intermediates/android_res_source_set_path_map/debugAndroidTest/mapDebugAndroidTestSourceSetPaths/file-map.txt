@@ -1,0 +1,6 @@
+com.example.problemchecker.test.app-androidTest-0 G:\My Drive\Problem Checker\android-app\app\build\generated\res\resValues\androidTest\debug
+com.example.problemchecker.test.app-updated_navigation_xml-1 G:\My Drive\Problem Checker\android-app\app\build\generated\updated_navigation_xml\debugAndroidTest
+com.example.problemchecker.test.app-packageDebugAndroidTestResources-2 G:\My Drive\Problem Checker\android-app\app\build\intermediates\incremental\debugAndroidTest\packageDebugAndroidTestResources\merged.dir
+com.example.problemchecker.test.app-packageDebugAndroidTestResources-3 G:\My Drive\Problem Checker\android-app\app\build\intermediates\incremental\debugAndroidTest\packageDebugAndroidTestResources\stripped.dir
+com.example.problemchecker.test.app-debugAndroidTest-4 G:\My Drive\Problem Checker\android-app\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
+gradleHome-0 C:\Users\63926\.gradle

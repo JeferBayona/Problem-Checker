@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.example.problemchecker.app-debug-39:/layout_activity_result.xml.flat",
+        "source": "com.example.problemchecker.app-main-41:/layout/activity_result.xml"
+    },
+    {
+        "merged": "com.example.problemchecker.app-debug-39:/layout_activity_main.xml.flat",
+        "source": "com.example.problemchecker.app-main-41:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.problemchecker.app-debug-39:/layout_activity_scan_answer.xml.flat",
+        "source": "com.example.problemchecker.app-main-41:/layout/activity_scan_answer.xml"
+    },
+    {
+        "merged": "com.example.problemchecker.app-debug-39:/drawable_rounded_edittext_background.xml.flat",
+        "source": "com.example.problemchecker.app-main-41:/drawable/rounded_edittext_background.xml"
+    }
+]

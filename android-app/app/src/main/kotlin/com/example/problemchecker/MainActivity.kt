@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -15,13 +16,16 @@ class MainActivity : AppCompatActivity() {
         val submitButton = findViewById<Button>(R.id.submitButton)
 
         submitButton.setOnClickListener {
-            val problemStatement = problemInput.text.toString()
-            if (problemStatement.isNotEmpty()) {
-                // Navigate to ScanAnswerActivity with problem statement
-                val intent = Intent(this, ScanAnswerActivity::class.java)
-                intent.putExtra("PROBLEM_STATEMENT", problemStatement)
-                startActivity(intent)
+            val problemStatement = problemInput.text.toString().trim()
+            if (problemStatement.isEmpty()) {
+                Toast.makeText(this, "Please enter a problem statement", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            // Navigate to ScanAnswerActivity with problem statement
+            val intent = Intent(this, ScanAnswerActivity::class.java)
+            intent.putExtra("PROBLEM_STATEMENT", problemStatement)
+            startActivity(intent)
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.problemchecker
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
@@ -15,6 +16,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -119,8 +122,27 @@ class ScanAnswerActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    Toast.makeText(this@ScanAnswerActivity, "Photo saved successfully", Toast.LENGTH_SHORT).show()
-                    // TODO: Send image to backend for processing
+                    Toast.makeText(this@ScanAnswerActivity, "Processing answer...", Toast.LENGTH_SHORT).show()
+                    
+                    // Read the saved image and convert to base64
+                    val inputStream = output.savedUri?.let { contentResolver.openInputStream(it) }
+                    if (inputStream != null) {
+                        try {
+                            val imageBytes = inputStream.readBytes()
+                            val base64Image = android.util.Base64.encodeToString(imageBytes, android.util.Base64.NO_WRAP)
+                            
+                            // Send to backend for AI analysis
+                            sendAnswerToBackend(base64Image)
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                this@ScanAnswerActivity,
+                                "Error processing image: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } finally {
+                            inputStream.close()
+                        }
+                    }
                 }
             }
         )
@@ -130,6 +152,58 @@ class ScanAnswerActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(
             baseContext, it
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun sendAnswerToBackend(base64Image: String) {
+        val problemStatement = problemStatement
+        if (problemStatement.isEmpty()) {
+            Toast.makeText(this, "Problem statement missing", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Launch coroutine to call backend
+        lifecycleScope.launch {
+            try {
+                val apiService = ApiClient.getInstance(this@ScanAnswerActivity)
+                    .create(ApiService::class.java)
+                
+                val request = ProcessAnswerRequest(
+                    problemStatement = problemStatement,
+                    studentAnswerImage = base64Image
+                )
+                
+                val response = apiService.processAnswer(request)
+                
+                if (response.success) {
+                    // Navigate to ResultActivity with analysis results
+                    val intent = Intent(this@ScanAnswerActivity, ResultActivity::class.java).apply {
+                        putExtra("PROBLEM_STATEMENT", problemStatement)
+                        putExtra("CORRECT_ANSWER", response.analysis.correctAnswer)
+                        putExtra("STUDENT_ANSWER", response.analysis.studentAnswer)
+                        putExtra("IS_CORRECT", response.analysis.isCorrect)
+                        putExtra("ACCURACY", response.analysis.accuracy)
+                        putExtra("FEEDBACK", response.analysis.feedback)
+                        putExtra("STRENGTHS", response.analysis.strengths.toTypedArray())
+                        putExtra("WEAKNESSES", response.analysis.weaknesses.toTypedArray())
+                        putExtra("SUGGESTIONS", response.analysis.suggestions.toTypedArray())
+                    }
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(
+                        this@ScanAnswerActivity,
+                        "Error: ${response.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@ScanAnswerActivity,
+                    "Network error: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     override fun onDestroy() {
