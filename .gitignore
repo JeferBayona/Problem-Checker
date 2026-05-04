@@ -1,0 +1,23 @@
+# Android
+android-app/.gradle/
+android-app/build/
+android-app/.idea/
+android-app/*.iml
+android-app/local.properties
+
+# Backend
+backend/node_modules/
+backend/.env
+backend/.env.local
+backend/dist/
+backend/.DS_Store
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~

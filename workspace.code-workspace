@@ -1,0 +1,13 @@
+{
+  "name": "Problem Checker",
+  "description": "AI-powered student answer verification mobile app with camera scanning",
+  "version": "1.0.0",
+  "folders": [
+    {
+      "path": "backend"
+    },
+    {
+      "path": "android-app"
+    }
+  ]
+}
