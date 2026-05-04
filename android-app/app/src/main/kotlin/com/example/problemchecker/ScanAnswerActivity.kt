@@ -162,9 +162,6 @@ class ScanAnswerActivity : AppCompatActivity() {
                 // Only request WRITE_EXTERNAL_STORAGE for Android 9 and below
                 if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.P) {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    add(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
-            }.toTypedArray()
                 }
             }.toTypedArray()
     }
