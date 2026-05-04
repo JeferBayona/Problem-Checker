@@ -1,6 +1,7 @@
 package com.example.problemchecker
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
@@ -34,6 +35,9 @@ class ScanAnswerActivity : AppCompatActivity() {
         viewFinder = findViewById(R.id.viewFinder)
         val captureButton = findViewById<Button>(R.id.captureButton)
 
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
+        // Request permissions first
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -43,10 +47,21 @@ class ScanAnswerActivity : AppCompatActivity() {
         }
 
         captureButton.setOnClickListener {
-            takePhoto()
+            // Check permissions before taking photo
+            if (allPermissionsGranted()) {
+                takePhoto()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Camera permission is required. Please grant it in Settings.",
+                    Toast.LENGTH_LONG
+                ).show()
+                // Request permissions again
+                ActivityCompat.requestPermissions(
+                    this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+                )
+            }
         }
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     private fun startCamera() {
@@ -141,21 +156,16 @@ class ScanAnswerActivity : AppCompatActivity() {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS =
-            mutableListOf (
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+            mutableListOf(
+                Manifest.permission.CAMERA
             ).apply {
+                // Only request WRITE_EXTERNAL_STORAGE for Android 9 and below
                 if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.P) {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    add(Manifest.permission.READ_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
-    }
-}
-
-data class ContentValues(
-    val values: Map<String, Any> = emptyMap()
-) {
-    fun put(key: String, value: Any) {
-        // Implementation for content values
+                }
+            }.toTypedArray()
     }
 }
